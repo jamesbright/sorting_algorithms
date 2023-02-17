@@ -12,7 +12,7 @@ void insertion_sort_list(listint_t **list)
 bool flag = false;
 listint_t *tmp = NULL, *aux = NULL;
 
-if (!list || !(*list) || !(*listt)->next)
+if (!list || !(*list) || !(*list)->next)
 return;
 
 tmp = *list;
@@ -49,4 +49,5 @@ if (!flag)
 tmp = tmp->next;
 else
 tmp = aux, flag = false;
+}
 }
