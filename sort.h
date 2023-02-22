@@ -38,5 +38,7 @@ listint_t *get_dlistint_lelem(listint_t *h);
 void counting_sort(int *array, size_t size);
 void merge_sort(int *array, size_t size);
 int getCantRep(int num);
+void sort_alg(int *arr, int left, int right, size_t size);
+int split(int *arr, int left, int right, size_t size);
 
 #endif /** END _SORT_H_ **/

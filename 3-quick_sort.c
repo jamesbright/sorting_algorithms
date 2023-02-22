@@ -1,79 +1,72 @@
 #include "sort.h"
 
-
 /**
- * partition - function to find the partion position
- * @array: array to look into
- * @size: size of array
- * @low: low section of array
- * @high: high section of array
- *
- * Return: the partition position
- */
-
-int partition(int *array, int low, int high, size_t size)
-{
-int i, j, pivot, tmp;
-pivot = array[high];
-
-i = low;
-
-for (j = low; j < high; ++j)
-{
-if (array[j] < pivot)
-{
-
-tmp = array[i];
-array[i] = array[j];
-array[j] = tmp;
-
-if (tmp != array[j])
-print_array(array, size);
-++i;
-}
-}
-tmp = array[i];
-array[i] = array[high];
-array[high] = tmp;
-
-if (tmp != array[i])
-print_array(array, size);
-
-return (i);
-}
-
-/**
- * find_pivot - does sorting action
- * @array: array to sort
- * @size: size of array
- * @low: lower boundary
- * @high: higher boundary
- *
- * Return: Nothing
- */
-
-
-void find_pivot(int *array, int low, int high, size_t size)
-{
-int pvt = 0;
-if (low < high)
-{
-pvt = partition(array, low, high, size);
-find_pivot(array, low, pvt - 1, size);
-find_pivot(array, pvt + 1, high, size);
-}
-}
-/**
- * quick_sort - sorts an array using quick sort
- * @array: array to sort
- * @size: size of the array
- *
- * Return: Nothing
- */
-
+  * quick_sort - quicksort algorithm
+  * @array: array to be sorted
+  * @size: size of array
+  */
 void quick_sort(int *array, size_t size)
 {
-if (!array || size < 2)
+if (array == NULL || size <= 1)
 return;
-find_pivot(array, 0, size - 1, size);
+sort_alg(array, 0, size - 1, size);
+}
+
+/**
+  * sort_alg - recursive sorting algorithm
+  * @arr: array
+  * @left: leftmost index
+  * @right: rightmost index
+  * @size: full size of array
+  */
+void sort_alg(int *arr, int left, int right, size_t size)
+{
+int pivot;
+
+if (left < right)
+{
+pivot = split(arr, left, right, size);
+sort_alg(arr, left, pivot - 1, size);
+sort_alg(arr, pivot + 1, right, size);
+}
+}
+
+/**
+  * split - split array
+  * @arr: array
+  * @left: leftmost index
+  * @right: rightmost index
+  * @size: full array size
+  * Return: pivot index
+  */
+int split(int *arr, int left, int right, size_t size)
+{
+int i, i2, pivot, tmp;
+
+pivot = arr[right];
+i = left;
+
+for (i2 = left; i2 < right; i2++)
+{
+if (arr[i2] < pivot)
+{
+if (i != i2)
+{
+tmp = arr[i2];
+arr[i2] = arr[i];
+arr[i] = tmp;
+print_array(arr, size);
+}
+i++;
+}
+}
+if (arr[i] != arr[right])
+{
+tmp = arr[i];
+arr[i] = arr[right];
+arr[right] = tmp;
+print_array(arr, size);
+}
+
+return (i);
 }
