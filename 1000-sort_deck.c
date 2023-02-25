@@ -1,64 +1,88 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "deck.h"
 
 /**
- * cmp_cards - Compare two cards for sorting
- * @a: First card
- * @b: Second card
- * Return: Negative, zero, or positive value depending on the ordering of the cards
+ * cardcmp - compares two card
+ * @p1: card 1
+ * @p2: card 2
+ * Return: result of comparison
  */
-int cmp_cards(const void *a, const void *b)
-{
-const deck_node_t *node_a = *(const deck_node_t **)a;
-const deck_node_t *node_b = *(const deck_node_t **)b;
-const card_t *card_a = node_a->card;
-const card_t *card_b = node_b->card;
 
-int value_diff = strcmp(card_a->value, card_b->value);
-if (value_diff != 0) {
-return value_diff;
+
+int cardcmp(const void *p1, const void *p2)
+{
+const card_t *card1, *card2;
+int cmp;
+
+card1 = ((deck_node_t *)p1)->card;
+card2 = ((deck_node_t *)p2)->card;
+cmp = strcmp(card1->value, card2->value);
+if (cmp != 0)
+{
+return cmp;
 }
 else
 {
-return card_a->kind - card_b->kind;
+return card1->kind - card2->kind;
 }
 }
 
 /**
- * sort_deck - Sort a deck of cards
- * @deck: Pointer to the head of the deck
+ * sort_deck - sorts a deck of card with qsort
+ * @deck: deck of card to sort
+ * Return: Nothing
  */
+
 void sort_deck(deck_node_t **deck)
 {
-size_t size = 0;
-deck_node_t *node = *deck;
-
-while (node != NULL) {
-size++;
-node = node->next;
-}
-
-deck_node_t **node_arr = malloc(size * sizeof(deck_node_t *));
-if (node_arr == NULL) {
-return;
-}
- node = *deck;
-for (size_t i = 0; i < size; i++) {
-node_arr[i] = node;
-node = node->next;
-}
-qsort(node_arr, size, sizeof(deck_node_t *), cmp_cards);
-
-node = node_arr[0];
+deck_node_t *node, *temp;
+deck_node_t *sorted_deck = NULL;
+while (*deck)
+{
+node = *deck;
+*deck = node->next;
 node->prev = NULL;
-for (size_t i = 1; i < size; i++) {
-node_arr[i]->prev = node;
-node->next = node_arr[i];
-node = node_arr[i];
-}
 node->next = NULL;
-*deck = node_arr[0];
 
-free(node_arr);
+if (sorted_deck == NULL)
+{
+sorted_deck = node;
+continue;
+}
+
+temp = sorted_deck;
+while (temp != NULL && cardcmp(&node, &temp) > 0)
+{
+temp = temp->next;
+}
+
+if (temp == NULL)
+{
+deck_node_t *last = sorted_deck;
+while (last->next != NULL)
+{
+last = last->next;
+}
+last->next = node;
+node->prev = last;
+}
+else
+{
+if (temp->prev == NULL)
+{
+sorted_deck = node;
+}
+else
+{
+temp->prev->next = node;
+}
+node->prev = temp->prev;
+temp->prev = node;
+node->next = temp;
+}
+}
+
+*deck = sorted_deck;
 }
